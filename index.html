@@ -123,6 +123,11 @@
     <div class="button-wrapper">
         <button class="tap_button">TAP!</button>
     </div>
+    <div style="margin-top: 30px;">
+        <button id="saveBtn" style="padding: 12px 24px; border-radius: 12px; border: none; background: #2ecc71; color: white; font-weight: bold; font-size: 16px; cursor: pointer;">
+            📥 Задепать PZDC в бота
+        </button>
+    </div>
 
 </body>
 <script>
@@ -130,6 +135,7 @@
     tg.expand();
     const coinsText = document.getElementById('coins');
     const tapButton = document.querySelector('.tap_button');
+    const saveBtn = document.getElementById('saveBtn');
     let balance = 0;
 
     tapButton.addEventListener('click', () => {
@@ -137,6 +143,13 @@
         coinsText.innerText = balance;
         if (tg.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
+        }
+    });
+    saveBtn.addEventListener('click', () => {
+        if (balance > 0) {
+            tg.sendData(balance.toString())
+        } else {
+            alert("Сначала натапай коины!");
         }
     });
 </script>
