@@ -2,19 +2,19 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PZDC Tap</title>
-     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
-            user-select: none; /* Чтобы текст не выделялся при частых тапах */
+            user-select: none;
             -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         body {
-            /* Сочный тёмный градиент на фоне */
             background: radial-gradient(circle at center, #1b1b3a 0%, #080811 100%);
             margin: 0;
             min-height: 100vh; 
@@ -25,6 +25,7 @@
             font-family: 'Montserrat', sans-serif;
             color: #ffffff;
             overflow: hidden;
+            touch-action: manipulation; /* Отключает зум по двойному тапу */
         }
 
         .balance-card {
@@ -53,10 +54,8 @@
             background: linear-gradient(180deg, #ffffff 0%, #a5a5ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 20px rgba(165, 165, 255, 0.2);
         }
 
-        /* Контейнер для монеты с неоновым свечением сзади */
         .button-wrapper {
             position: relative;
             display: flex;
@@ -84,32 +83,22 @@
             border-radius: 50%; 
             border: 8px solid #6b6bff;      
             cursor: pointer;    
-            
             font-family: 'Montserrat', sans-serif;
             font-size: 32px;
             font-weight: 900;
             color: #ffffff;
             letter-spacing: 1px;
-
-            /* Градиент и объёмные тени */
             background: linear-gradient(145deg, #4545ff, #2a2a99);
             box-shadow: 
                 0 15px 35px rgba(0, 0, 0, 0.6),
                 inset 0 5px 15px rgba(255, 255, 255, 0.4),
                 inset 0 -5px 15px rgba(0, 0, 0, 0.6);
-            
-            /* Плавная отдача при нажатии */
-            transition: transform 0.08s ease, box-shadow 0.08s ease;
+            transition: transform 0.05s ease;
             outline: none;
         }
 
-        /* Эффект проминания монеты при клике/тапе */
         .tap_button:active {
             transform: scale(0.93);
-            box-shadow: 
-                0 5px 15px rgba(0, 0, 0, 0.4),
-                inset 0 2px 8px rgba(255, 255, 255, 0.4),
-                inset 0 -2px 8px rgba(0, 0, 0, 0.6);
         }
     </style>
 </head>
@@ -121,42 +110,49 @@
     </div>
 
     <div class="button-wrapper">
-        <button class="tap_button">TAP!</button>
+        <button class="tap_button" id="tapBtn">TAP!</button>
     </div>
+    
     <div style="margin-top: 30px;">
         <button id="saveBtn" style="padding: 12px 24px; border-radius: 12px; border: none; background: #2ecc71; color: white; font-weight: bold; font-size: 16px; cursor: pointer;">
             📥 Задепать PZDC в бота
         </button>
     </div>
 
-</body>
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand(); 
 
     const coinsText = document.getElementById('coins');
-    const tapButton = document.querySelector('.tap_button');
+    const tapButton = document.getElementById('tapBtn');
     const saveBtn = document.getElementById('saveBtn');
     let balance = 0;
 
-    tapButton.addEventListener('click', () => {
+    function handleTap(e) {
+        if (e) e.preventDefault();
         balance += 1;
         coinsText.innerText = balance;
         
         if (tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred('medium');
+            tg.HapticFeedback.impactOccurred('light');
         }
+    }
+
+    // Поддержка и тачскринов, и кликов мышкой с ПК
+    tapButton.addEventListener('touchstart', handleTap, { passive: false });
+    tapButton.addEventListener('click', (e) => {
+        // Если событие пришло от тача, не дублируем клик
+        if (e.detail !== 0) handleTap();
     });
 
     saveBtn.addEventListener('click', () => {
         if (balance > 0) {
-
             tg.sendData(balance.toString());
-            
             tg.close();
         } else {
             alert("Сначала натапай коины!");
         }
     });
 </script>
+</body>
 </html>
