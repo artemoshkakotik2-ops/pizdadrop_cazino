@@ -132,7 +132,8 @@
 </body>
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
+    tg.expand(); 
+
     const coinsText = document.getElementById('coins');
     const tapButton = document.querySelector('.tap_button');
     const saveBtn = document.getElementById('saveBtn');
@@ -141,13 +142,18 @@
     tapButton.addEventListener('click', () => {
         balance += 1;
         coinsText.innerText = balance;
+        
         if (tg.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
     });
+
     saveBtn.addEventListener('click', () => {
         if (balance > 0) {
-            tg.sendData(balance.toString())
+
+            tg.sendData(balance.toString());
+            
+            tg.close();
         } else {
             alert("Сначала натапай коины!");
         }
