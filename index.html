@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PZDC Tap</title>
+     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Чтобы текст не выделялся при частых тапах */
+            -webkit-user-select: none;
+        }
+
+        body {
+            /* Сочный тёмный градиент на фоне */
+            background: radial-gradient(circle at center, #1b1b3a 0%, #080811 100%);
+            margin: 0;
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;   
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .balance-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            text-align: center;
+        }
+
+        .balance-title {
+            font-size: 14px;
+            color: #8f8fbf;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 5px 0;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 900;
+            margin: 0;
+            background: linear-gradient(180deg, #ffffff 0%, #a5a5ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 20px rgba(165, 165, 255, 0.2);
+        }
+
+        /* Контейнер для монеты с неоновым свечением сзади */
+        .button-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            background: #5d5dff;
+            filter: blur(40px);
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .tap_button {
+            position: relative;
+            z-index: 1;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%; 
+            border: 8px solid #6b6bff;      
+            cursor: pointer;    
+            
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 1px;
+
+            /* Градиент и объёмные тени */
+            background: linear-gradient(145deg, #4545ff, #2a2a99);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.6),
+                inset 0 5px 15px rgba(255, 255, 255, 0.4),
+                inset 0 -5px 15px rgba(0, 0, 0, 0.6);
+            
+            /* Плавная отдача при нажатии */
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
+            outline: none;
+        }
+
+        /* Эффект проминания монеты при клике/тапе */
+        .tap_button:active {
+            transform: scale(0.93);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.4),
+                inset 0 2px 8px rgba(255, 255, 255, 0.4),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="balance-card">
+        <p class="balance-title">Ваш Баланс</p>
+        <h1 class="balance-amount"><span id="coins">0</span> PZDC</h1>
+    </div>
+
+    <div class="button-wrapper">
+        <button class="tap_button">TAP!</button>
+    </div>
+
+</body>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    const coinsText = document.getElementById('coins');
+    const tapButton = document.querySelector('.tap_button');
+    let balance = 0;
+
+    tapButton.addEventListener('click', () => {
+        balance += 1;
+        coinsText.innerText = balance;
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+    });
+</script>
+</html>
